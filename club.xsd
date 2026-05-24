@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
+
+  <xs:simpleType name="idCategorie">
+    <xs:restriction base="xs:ID">
+      <xs:pattern value="C[0-9]+"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="idMembre">
+    <xs:restriction base="xs:ID">
+      <xs:pattern value="M[0-9]{3}"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="idConcours">
+    <xs:restriction base="xs:ID">
+      <xs:pattern value="CO[0-9]+"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="refCategorie">
+    <xs:restriction base="xs:IDREF"/>
+  </xs:simpleType>
+
+  <xs:simpleType name="refMembre">
+    <xs:restriction base="xs:IDREF"/>
+  </xs:simpleType>
+
+  <xs:simpleType name="typeCoefficient">
+    <xs:restriction base="xs:decimal">
+      <xs:minExclusive value="0"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="typeComplexite">
+    <xs:restriction base="xs:integer">
+      <xs:minInclusive value="0"/>
+      <xs:maxInclusive value="100"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="typeTemps">
+    <xs:restriction base="xs:integer">
+      <xs:minExclusive value="0"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="typeEmail">
+    <xs:restriction base="xs:string">
+      <xs:pattern value="[^@]+@[^@]+"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="stringNonVide">
+    <xs:restriction base="xs:string">
+      <xs:minLength value="1"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:complexType name="typeCategorie">
+    <xs:attribute name="id"      type="idCategorie"  use="required"/>
+    <xs:attribute name="libelle" type="stringNonVide" use="required"/>
+  </xs:complexType>
+
+  <xs:complexType name="typeMembre">
+    <xs:sequence>
+      <xs:element name="nom"    type="stringNonVide"/>
+      <xs:element name="prenom" type="stringNonVide"/>
+      <xs:element name="email"  type="typeEmail"/>
+    </xs:sequence>
+    <xs:attribute name="id"           type="idMembre"    use="required"/>
+    <xs:attribute name="categorieRef" type="refCategorie" use="required"/>
+  </xs:complexType>
+
+  <xs:complexType name="typeParticipant">
+    <xs:sequence>
+      <xs:element name="complexite"     type="typeComplexite"/>
+      <xs:element name="tempsExecution" type="typeTemps"/>
+    </xs:sequence>
+    <xs:attribute name="membreRef" type="refMembre" use="required"/>
+  </xs:complexType>
+
+  <xs:complexType name="typeParticipants">
+    <xs:sequence>
+      <xs:element name="participant"
+                  type="typeParticipant"
+                  minOccurs="3"
+                  maxOccurs="unbounded"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="typeConcours">
+    <xs:sequence>
+      <xs:element name="titre"        type="stringNonVide"/>
+      <xs:element name="participants" type="typeParticipants"/>
+    </xs:sequence>
+    <xs:attribute name="id"           type="idConcours"     use="required"/>
+    <xs:attribute name="categorieRef" type="refCategorie"    use="required"/>
+    <xs:attribute name="date"         type="xs:date"         use="required"/>
+    <xs:attribute name="coefficient"  type="typeCoefficient" use="required"/>
+  </xs:complexType>
+
+  <xs:element name="club">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element name="categories">
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element name="categorie" type="typeCategorie"
+                          minOccurs="3" maxOccurs="unbounded"/>
+            </xs:sequence>
+          </xs:complexType>
+        </xs:element>
+        <xs:element name="membres">
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element name="membre" type="typeMembre"
+                          minOccurs="8" maxOccurs="unbounded"/>
+            </xs:sequence>
+          </xs:complexType>
+        </xs:element>
+        <xs:element name="concours">
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element name="concours" type="typeConcours"
+                          minOccurs="3" maxOccurs="unbounded"/>
+            </xs:sequence>
+          </xs:complexType>
+        </xs:element>
+      </xs:sequence>
+      <xs:attribute name="nom" type="stringNonVide" use="required"/>
+    </xs:complexType>
+  </xs:element>
+
+</xs:schema>
